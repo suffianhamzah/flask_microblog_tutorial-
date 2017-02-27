@@ -1,4 +1,4 @@
-#!/home/suffian/Envs/microblog_tutorial/bin/python
+#!/home/suffian/Envs/microblog_tutoriak/bin/python
 import imp
 from migrate.versioning import api
 from app import db

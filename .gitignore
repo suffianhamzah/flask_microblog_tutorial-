@@ -90,5 +90,6 @@ ENV/
 
 #databse file
 db.sqlite3
-
+*.db
+db_repository/
 tmp/

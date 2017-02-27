@@ -1,4 +1,4 @@
-#!/home/suffian/Envs/microblog_tutorial/bin/python
+#!/home/suffian/Envs/microblog_tutoriak/bin/python
 from migrate.versioning import api
 from config import SQLALCHEMY_DATABASE_URI
 from config import SQLALCHEMY_MIGRATE_REPO
