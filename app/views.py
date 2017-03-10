@@ -1,9 +1,9 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask_login import login_user, logout_user, current_user, login_required
-
-from app import app, db, lm, oid
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
+from flask_babel import gettext
+from app import app, db, lm, oid, babel
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES
 
 from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User,Post
@@ -17,6 +17,7 @@ def before_request():
         db.session.add(g.user)
         db.session.commit()
         g.search_form = SearchForm()
+    g.locale = get_locale()
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -30,7 +31,7 @@ def index(page=1):
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    
+
     posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
 
     return render_template('index.html',
@@ -75,21 +76,23 @@ def edit():
 def load_user(id):
     return User.query.get(int(id))
 
+
 @oid.after_login
 def after_login(resp):
     if resp.email is None or resp.email == "":
-        flash('Invalid login. Please try again.')
+        flash(gettext('Invalid login. Please try again.'))
         return redirect(url_for('login'))
     user = User.query.filter_by(email=resp.email).first()
     if user is None:
         nickname = resp.nickname
         if nickname is None or nickname == "":
             nickname = resp.email.split('@')[0]
-        nickname = User.make_unique_nickname(nickname)    
+        nickname = User.make_valid_nickname(nickname)
+        nickname = User.make_unique_nickname(nickname)
         user = User(nickname=nickname, email=resp.email)
         db.session.add(user)
         db.session.commit()
-        #make user follow him/herself
+        # make user follow him/herself
         db.session.add(user.follow(user))
         db.session.commit()
     remember_me = False
@@ -164,6 +167,7 @@ def search():
         return redirect(url_for('index'))
     return redirect(url_for('search_results', query=g.search_form.search.data))
 
+
 @app.route('/search_results/<query>')
 @login_required
 def search_results(query):
@@ -173,12 +177,18 @@ def search_results(query):
                                             results=results)
 
 
-#Error handler code for invalid http requests
+# Error handler code for invalid http requests
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
 
+
 @app.errorhandler(500)
-def  internal_error(error):
+def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(LANGUAGES.keys())

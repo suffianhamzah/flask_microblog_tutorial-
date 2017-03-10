@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -11,26 +13,31 @@ OPENID_PROVIDERS = [
     {'name': 'Flickr', 'url': 'http://www.flickr.com/<username>'},
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db' )
-SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository' )
+LANGUAGES = {
+    'en': 'English',
+    'es': 'Español'
+}
+
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
-#administrator list
+# administrator list
 ADMINS = ['suffianhamzah@gmail.com']
 
-#pagination limit
+# pagination limit
 POSTS_PER_PAGE = 3
 
-#whoosh
+# whoosh
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
 MAX_SEARCH_RESULTS = 50
 
-#email server
+# email server
 MAIL_SERVER = 'smtp.mail.yahoo.com'
 MAIL_PORT = 465
 MAIL_USE_SSL = True
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
-#admin list
+# admin list
 ADMINS = ['suffian_aris@yahoo.com']

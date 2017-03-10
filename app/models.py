@@ -1,3 +1,5 @@
+import re
+
 from app import app, db
 from hashlib import md5
 import flask_whooshalchemy as whooshalchemy
@@ -26,16 +28,13 @@ class User(db.Model):
     def is_authenticated(self):
         return True
 
-
     @property
     def is_active(self):
         return True
 
-
     @property
     def is_anonymous(self):
         return False
-
 
     def get_id(self):
         try:
@@ -58,6 +57,10 @@ class User(db.Model):
             version += 1
         return new_nickname
 
+    @staticmethod
+    def make_valid_nickname(nickname):
+        return re.sub('[^a-zA-Z0-9_\.]', '', nickname)
+
     def follow(self, user):
         if not self.is_following(user):
             self.followed.append(user)
@@ -67,13 +70,13 @@ class User(db.Model):
         if self.is_following(user):
             self.followed.remove(user)
             return self
-    
+
     def is_following(self, user):
         return self.followed.filter(followers.c.followed_id == user.id).count() > 0
 
 
     def followed_posts(self):
-        
+
         #query = Post.query.order_by(Post.timestamp.time)
         return (Post.query
                    .join(followers, (followers.c.followed_id == Post.user_id))
@@ -91,7 +94,7 @@ class Post(db.Model):
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    
+
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
