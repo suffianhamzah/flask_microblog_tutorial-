@@ -7,18 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-09 20:44-0800\n"
-"PO-Revision-Date: 2017-03-09 20:45-0800\n"
+"POT-Creation-Date: 2017-03-09 22:09-0800\n"
+"PO-Revision-Date: 2017-03-09 22:11-0800\n"
 "Last-Translator: \n"
 "Language: es\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
-#: app/__init__.py:22
+#: app/__init__.py:23
 msgid "Please login to access this page."
 msgstr "Ingreso invalido. Vuelve a intentarlo."
 
@@ -34,7 +35,7 @@ msgstr ""
 msgid "This nickname is already in use. Please choose another one."
 msgstr "Este apodo ya está en uso. Por favor elije otro."
 
-#: app/views.py:83
+#: app/views.py:92
 msgid "Invalid login. Please try again."
 msgstr "Ingreso invalido. Vuelve a intentarlo."
 
@@ -43,3 +44,6 @@ msgstr "Ingreso invalido. Vuelve a intentarlo."
 msgid "%(nickname)s said %(when)s:"
 msgstr "%(nickname)s dijo %(when)s:"
 
+#: app/templates/post.html:13
+msgid "Translate"
+msgstr "Traducir"

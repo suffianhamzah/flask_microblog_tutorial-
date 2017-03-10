@@ -41,3 +41,7 @@ MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
 # admin list
 ADMINS = ['suffian_aris@yahoo.com']
+
+# microsoft translation service
+MS_TRANSLATOR_CLIENT_ID = ''
+MS_TRANSLATOR_CLIENT_SECRET = ''
