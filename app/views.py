@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import gettext
@@ -11,6 +12,7 @@ from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User, Post
 from .emails import follower_notification
 from .translate import microsoft_translate
+
 
 @app.before_request
 def before_request():
