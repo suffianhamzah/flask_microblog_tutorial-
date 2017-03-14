@@ -3,10 +3,11 @@ from datetime import datetime
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import gettext
+from flask_sqlalchemy import get_debug_queries
 from guess_language import guessLanguage
 
 from app import app, db, lm, oid, babel
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT
 
 from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User, Post
@@ -23,6 +24,14 @@ def before_request():
         db.session.commit()
         g.search_form = SearchForm()
     g.locale = get_locale()
+
+@app.after_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= DATABASE_QUERY_TIMEOUT:
+            app.logger.warning("SLOW QUERY:  {0}\nParameters: {1}\nDuration: {2}\nContext: {3}\n").format(
+                query.statement, query.parameters, query.duration, query.context
+            )
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -152,6 +161,7 @@ def follow(nickname):
     follower_notification(user, g.user)
     return redirect(url_for('user', nickname))
 
+
 @app.route('/unfollow/<nickname>')
 @login_required
 def unfollow(nickname):
@@ -164,11 +174,27 @@ def unfollow(nickname):
     u = g.user.unfollow(user)
     if u is None:
         flash('Cannot unfollow ' + nickname + '.')
-        return  redirect(url_for('user', nickname=nickname))
+        return redirect(url_for('user', nickname=nickname))
     db.session.add(u)
     db.session.commit()
     flash('You have stopped following' + nickname + '.')
     return redirect(url_for('user', nickname=nickname))
+
+
+@app.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    post = Post.query.get(id)
+    if post is None:
+        flash('Post not found.')
+        return redirect(url_for('index'))
+    if post.author.id != g.user.id:
+        flash('You cannot delete this post.')
+        return redirect(url_for('index'))
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted')
+    return redirect(url_for('index'))
 
 
 @app.route('/translate', methods=['POST'])
